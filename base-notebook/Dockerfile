@@ -19,6 +19,26 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 USER root
 
+RUN apt-get -y update
+RUN apt-get purge --auto-remove openjdk*
+RUN apt-get -y install openjdk-8-jdk
+RUN apt-get -y install nodejs
+RUN apt-get -y install npm
+RUN apt-get -y install wget ca-certificates libhdf4-0 iputils-ping git maven
+
+RUN npm install elasticdump -g && \
+    apt-get -y install python3 python3-dev python3-pip && \
+    python3 -m pip install --upgrade pip && \
+    apt clean && rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
+
+RUN git clone https://github.com/SparkTC/stocator.git && \
+    cd stocator && \
+    git pull && \
+    mvn install && \
+    mvn clean package -Pall-in-one
+
 # ---- Miniforge installer ----
 # Default values can be overridden at build time
 # (ARGS are in lower case to distinguish them from ENV)
