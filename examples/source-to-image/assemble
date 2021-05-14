@@ -2,7 +2,7 @@
 
 set -x
 
-set -eo pipefail
+#set -eo pipefail
 
 # Remove any 'environment.yml' or 'requirements.txt' files which may
 # have been carried over from the base image so we don't reinstall
@@ -19,6 +19,7 @@ rm -f /home/$NB_USER/requirements.txt
 cp -Rf /tmp/src/. /home/$NB_USER
 ls -las /home/$NB_USER
 ls -las /tmp/src
+whoami
 rm -rf /tmp/src
 
 # Install any Python modules. If we find an 'environment.yml' file we
