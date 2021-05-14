@@ -40,3 +40,5 @@ fi
 
 fix-permissions $CONDA_DIR
 fix-permissions /home/$NB_USER
+ls /usr/local/bin/fix-permissions
+ls /usr/local/bin
