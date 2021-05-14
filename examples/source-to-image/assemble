@@ -17,7 +17,8 @@ rm -f /home/$NB_USER/requirements.txt
 # Copy injected files to target directory.
 
 cp -Rf /tmp/src/. /home/$NB_USER
-
+ls -las /home/$NB_USER
+ls -las /tmp/src
 rm -rf /tmp/src
 
 # Install any Python modules. If we find an 'environment.yml' file we
