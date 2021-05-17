@@ -16,3 +16,4 @@ Flask
 elasticsearch
 elasticsearch_dsl
 kafka-python
+findspark

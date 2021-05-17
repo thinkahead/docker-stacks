@@ -2,8 +2,8 @@
 # Distributed under the terms of the Modified BSD License.
 
 # Ubuntu image 
-FROM ibmcom/powerai
-#FROM ppc64le/ubuntu:18.04
+#FROM ibmcom/powerai
+FROM ppc64le/ubuntu:18.04
 
 LABEL maintainer="Alexei Karve <karve@us.ibm.com>"
 ARG NB_USER="madi"
@@ -15,9 +15,45 @@ USER root
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -y update && \
     apt-get purge --auto-remove openjdk* && \
-    apt-get -y install openjdk-8-jdk wget ca-certificates libhdf4-0 iputils-ping gnupg git curl && \
+    apt-get -y install openjdk-8-jdk wget ca-certificates libhdf4-0 iputils-ping gnupg git vim ssh sudo curl net-tools openssh-server && \
     rm -rf /var/lib/apt/lists/*
 
+#ENV HADOOP_VERSION=3.1.4
+#ENV SPARK_VERSION=2.4.5
+#RUN curl -O https://archive.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz \
+#      && tar -xzf spark-$SPARK_VERSION-bin-without-hadoop.tgz \
+#      && mv spark-$SPARK_VERSION-bin-without-hadoop /opt/spark-$SPARK_VERSION \
+#      && rm spark-$SPARK_VERSION-bin-without-hadoop.tgz \
+#      && echo 'export SPARK_DIST_CLASSPATH=$(/opt/hadoop-$HADOOP_VERSION/bin/hadoop classpath)' > /opt/spark-$SPARK_VERSION/conf/spark-env.sh
+#
+#ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-ppc64el/ \
+#    HADOOP_URL=https://www.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz \
+#    HADOOP_HOME=/opt/hadoop-$HADOOP_VERSION \
+#    HADOOP_CONF_DIR=/etc/hadoop \
+#    SPARK_HOME=/opt/spark-$SPARK_VERSION \
+#    MULTIHOMED_NETWORK=1 \
+#    CONDA_INSTALL_DIR=/opt/anaconda \
+#    PATH=$HADOOP_HOME/bin/:${CONDA_INSTALL_DIR}/bin/:$PATH
+#
+#RUN curl -O https://dist.apache.org/repos/dist/release/hadoop/common/KEYS && \
+#    gpg --import KEYS && \
+#    set -x && \
+#    curl -fSL "$HADOOP_URL" -o /tmp/hadoop.tar.gz && \
+#    curl -fSL "$HADOOP_URL.asc" -o /tmp/hadoop.tar.gz.asc && \
+#    gpg --verify /tmp/hadoop.tar.gz.asc && \
+#    tar -xf /tmp/hadoop.tar.gz -C /opt/ && \
+#    rm /tmp/hadoop.tar.gz* && \
+#    ln -s /opt/hadoop-$HADOOP_VERSION/etc/hadoop /etc/hadoop
+#
+##RUN curl -fSL "$HADOOP_URL" -o /tmp/hadoop.tar.gz && \
+##    tar -xf /tmp/hadoop.tar.gz -C /opt/ && \
+##    rm /tmp/hadoop.tar.gz* && \
+##    ln -s /opt/hadoop-$HADOOP_VERSION/etc/hadoop /etc/hadoop
+#
+#RUN curl -L -o /opt/hadoop-${HADOOP_VERSION}/share/hadoop/hdfs/hadoop-hdfs-3.1.3.jar  "http://icu-nxrm-1.pok.ibm.com:8081/repository/biloxi/patches/hadoop/3.1.3/hadoop-hdfs-3.1.3.jar" && \
+#    curl -L -o /opt/hadoop-${HADOOP_VERSION}/share/hadoop/hdfs/hadoop-hdfs-client-3.1.3.jar "http://icu-nxrm-1.pok.ibm.com:8081/repository/biloxi/patches/hadoop/3.1.3/hadoop-hdfs-client-3.1.3.jar" && \
+#    curl -L -o /opt/hadoop-${HADOOP_VERSION}/share/hadoop/hdfs/hadoop-hdfs-httpfs-3.1.3.jar "http://icu-nxrm-1.pok.ibm.com:8081/repository/biloxi/patches/hadoop/3.1.3/hadoop-hdfs-httpfs-3.1.3.jar"
+#
 # Install all OS dependencies for notebook server that starts but lacks all
 # features (e.g., download as all possible file formats)
 ENV DEBIAN_FRONTEND noninteractive
@@ -90,9 +126,14 @@ RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
     fix-permissions $HOME && \
     fix-permissions $CONDA_DIR
 
-USER $NB_UID
+RUN echo "$NB_USER     ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+COPY ssh_config /etc/ssh/ssh_config
+
+USER $NB_USER
 WORKDIR $HOME
 ARG PYTHON_VERSION=default
+RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys && chmod 0600 ~/.ssh/authorized_keys
+RUN whoami
 
 # Setup work directory for backward-compatibility
 RUN mkdir /home/$NB_USER/work && \
@@ -148,6 +189,8 @@ RUN cd /tmp && \
 
 RUN conda config --prepend channels https://public.dhe.ibm.com/ibmdl/export/pub/software/server/ibm-ai/conda/
 RUN conda config --prepend channels https://public.dhe.ibm.com/ibmdl/export/pub/software/server/ibm-ai/conda-early-access/linux-ppc64le/
+RUN conda update --quiet --yes -n base -c defaults conda
+
 RUN IBM_POWERAI_LICENSE_ACCEPT=yes conda install --yes jupyter scikit-learn numpy scipy pandas seaborn pyspark Flask elasticsearch pyarrow python-hdfs tensorflow keras pytz pytorch tensorflow-probability
 RUN conda clean --all -f -y && \
     fix-permissions $CONDA_DIR && \
