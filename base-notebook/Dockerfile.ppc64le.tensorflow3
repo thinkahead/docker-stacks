@@ -143,7 +143,6 @@ RUN cd /tmp && \
 #    fix-permissions $CONDA_DIR && \
 #    fix-permissions /home/$NB_USER
 
-RUN conda config --prepend channels https://public.dhe.ibm.com/ibmdl/export/pub/software/server/ibm-ai/conda/
 RUN conda config --prepend channels https://public.dhe.ibm.com/ibmdl/export/pub/software/server/ibm-ai/conda-early-access/linux-ppc64le/
 RUN IBM_POWERAI_LICENSE_ACCEPT=yes conda install --yes jupyter scikit-learn numpy scipy pandas seaborn pyspark=2.4.5 Flask elasticsearch pyarrow python-hdfs tensorflow keras pytz pytorch tensorflow-probability
 RUN conda clean --all -f -y && \
