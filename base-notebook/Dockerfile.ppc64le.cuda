@@ -2,8 +2,9 @@
 # Distributed under the terms of the Modified BSD License.
 
 # Ubuntu image 
-FROM ibmcom/powerai
+#FROM ibmcom/powerai
 #FROM ppc64le/ubuntu:18.04
+FROM nvidia/cuda-ppc64le:11.0.3-devel-ubuntu18.04
 
 LABEL maintainer="Alexei Karve <karve@us.ibm.com>"
 ARG NB_USER="madi"
