@@ -27,7 +27,7 @@ RUN curl -O https://archive.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SP
       && echo 'export SPARK_DIST_CLASSPATH=$(/opt/hadoop-$HADOOP_VERSION/bin/hadoop classpath)' > /opt/spark-$SPARK_VERSION/conf/spark-env.sh
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-ppc64el/ \
-    HADOOP_URL=https://www.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz \
+    HADOOP_URL=https://archive.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz \
     HADOOP_HOME=/opt/hadoop-$HADOOP_VERSION \
     HADOOP_CONF_DIR=/etc/hadoop \
     SPARK_HOME=/opt/spark-$SPARK_VERSION \
@@ -50,9 +50,9 @@ RUN curl -O https://dist.apache.org/repos/dist/release/hadoop/common/KEYS && \
 #    rm /tmp/hadoop.tar.gz* && \
 #    ln -s /opt/hadoop-$HADOOP_VERSION/etc/hadoop /etc/hadoop
 
-RUN curl -L -o /opt/hadoop-${HADOOP_VERSION}/share/hadoop/hdfs/hadoop-hdfs-3.1.3.jar  "http://icu-nxrm-1.pok.ibm.com:8081/repository/biloxi/patches/hadoop/3.1.3/hadoop-hdfs-3.1.3.jar" && \
-    curl -L -o /opt/hadoop-${HADOOP_VERSION}/share/hadoop/hdfs/hadoop-hdfs-client-3.1.3.jar "http://icu-nxrm-1.pok.ibm.com:8081/repository/biloxi/patches/hadoop/3.1.3/hadoop-hdfs-client-3.1.3.jar" && \
-    curl -L -o /opt/hadoop-${HADOOP_VERSION}/share/hadoop/hdfs/hadoop-hdfs-httpfs-3.1.3.jar "http://icu-nxrm-1.pok.ibm.com:8081/repository/biloxi/patches/hadoop/3.1.3/hadoop-hdfs-httpfs-3.1.3.jar"
+#RUN curl -L -o /opt/hadoop-${HADOOP_VERSION}/share/hadoop/hdfs/hadoop-hdfs-3.1.3.jar  "http://icu-nxrm-1.pok.ibm.com:8081/repository/biloxi/patches/hadoop/3.1.3/hadoop-hdfs-3.1.3.jar" && \
+#    curl -L -o /opt/hadoop-${HADOOP_VERSION}/share/hadoop/hdfs/hadoop-hdfs-client-3.1.3.jar "http://icu-nxrm-1.pok.ibm.com:8081/repository/biloxi/patches/hadoop/3.1.3/hadoop-hdfs-client-3.1.3.jar" && \
+#    curl -L -o /opt/hadoop-${HADOOP_VERSION}/share/hadoop/hdfs/hadoop-hdfs-httpfs-3.1.3.jar "http://icu-nxrm-1.pok.ibm.com:8081/repository/biloxi/patches/hadoop/3.1.3/hadoop-hdfs-httpfs-3.1.3.jar"
 
 # Install all OS dependencies for notebook server that starts but lacks all
 # features (e.g., download as all possible file formats)
