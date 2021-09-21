@@ -18,7 +18,8 @@ RUN apt-get -y update && \
     apt-get -y install openjdk-8-jdk wget ca-certificates libhdf4-0 iputils-ping gnupg git vim ssh sudo curl net-tools openssh-server && \
     rm -rf /var/lib/apt/lists/*
 
-ENV HADOOP_VERSION=3.1.4
+ENV HADOOP_VERSION=3.3.0
+#ENV HADOOP_VERSION=3.1.4
 ENV SPARK_VERSION=2.4.5
 RUN curl -O https://archive.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz \
       && tar -xzf spark-$SPARK_VERSION-bin-without-hadoop.tgz \
